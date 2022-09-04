@@ -33,7 +33,7 @@ contract ERC721 {
         // required address not zero
         require(to != address(0), 'ERC721 to mint to zero adress');
         // check token exists
-        require(_exists(tokenId), 'ERC721: toekn already to mint');
+        require(!_exists(tokenId), 'ERC721: token already to mint');
         // we adding a new address with token id
         _tokenOwner[tokenId] = to;
         // keep track each addres that mint 
