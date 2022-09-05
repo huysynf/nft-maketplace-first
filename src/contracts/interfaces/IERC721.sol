@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-interface ERC721 /* is ERC165 */ {
+interface IERC721 /* is ERC165 */ {
     event Transfer(address indexed _from, address indexed _to, uint256 indexed _tokenId);
 
     event Approval(address indexed _owner, address indexed _approved, uint256 indexed _tokenId);

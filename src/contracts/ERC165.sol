@@ -14,8 +14,7 @@ contract ERC165 is IRC165 {
       return   _supportedInterfaces[interfaceID];      
     }
 
-    function _registerInterface(bytes4 interfaceID) public {
-                
+    function _registerInterface(bytes4 interfaceID) public view {
         require(interfaceID != 0xffffffff, 'ERC165: invalid interface');
         _supportedInterfaces[interfaceID];      
     }

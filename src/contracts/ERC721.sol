@@ -13,18 +13,6 @@ import "./interfaces/IERC721.sol";
 
 
 contract ERC721 is ERC165, IERC721 {
-
-    event Transfer(
-        address indexed from, 
-        address indexed to, 
-        uint256 indexed tokenId);
-
-    event Approval(
-        address indexed owner,
-        address indexed approved,
-        uint256 indexed tokenId
-    );
-
     // mapping token id to owner
     mapping (uint256 => address) private _tokenOwner;
 
@@ -51,18 +39,11 @@ contract ERC721 is ERC165, IERC721 {
         return _ownerToTokenCount[_owner];
     }
 
-    /// @notice Find the owner of an NFT
-    /// @dev NFTs assigned to zero address are considered invalid, and queries
-    ///  about them do throw.
-    /// @param _tokenId The identifier for an NFT
-    /// @return The address of the owner of the NFT
-    function ownerOf(uint256 _tokenId) external view override returns (address){
+    function ownerOf(uint256 _tokenId) public view override returns (address){
         address owner = _tokenOwner[_tokenId];
-        require(owner != address(0), 'owner query for non-exit');
-
+        require( owner != address(0), 'owner query for non-exit');
         return owner;
     }
-
 
 
     function _mint(address to, uint256 tokenId) internal virtual {
@@ -78,13 +59,13 @@ contract ERC721 is ERC165, IERC721 {
         emit Transfer(address(0), to, tokenId);
     }
 
-    function approve(address _to, uint256 tokenId) public {
-        address owner = ownerOf(tokenId);
+    function approve(address _to, uint256 _tokenId) public {
+        address owner = ownerOf(_tokenId);
         require(_to != owner, 'Error: Appro to current owner');
         require(msg.sender != owner, 'Error: Current caller to current owner');
-        _tokenApproval[tokenId] = _to;
+        _tokenApproval[_tokenId] = _to;
 
-        emit Approval(owner, _to, tokenId);
+        emit Approval(owner, _to, _tokenId);
     }
 
 
@@ -96,20 +77,18 @@ contract ERC721 is ERC165, IERC721 {
         _ownerToTokenCount[_to] += 1;
         _tokenOwner[_tokenId] = _to;
 
-        emit Transfer(from, to, tokenId);
-        
+        emit Transfer(_from, _to, _tokenId);
     }
 
-    function transferFrom(address _from,address _to,uint256 _tokenId) public {
+    function transferFrom(address _from,address _to,uint256 _tokenId) public payable override {
         require(isApprovedOrOwner(msg.sender, _tokenId));
         _transferFrom(_from, _to, _tokenId);
 
     }
 
-    function isApprovedOrOwner(address spender, uint256 tokenId) internal returns(bool) {
+    function isApprovedOrOwner(address spender, uint256 tokenId) internal view returns(bool) {
         require(_exists(tokenId), 'Token not exits');
         address owner = ownerOf(tokenId);
-
         return (spender == owner);
     }
 }
