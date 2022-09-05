@@ -1,5 +1,7 @@
 pragma solidity ^0.8.0;
 
+import "./ERC165.sol";
+import "./interfaces/IERC721.sol";
 
     /*
         1. nft to point to an address
@@ -10,7 +12,7 @@ pragma solidity ^0.8.0;
     */
 
 
-contract ERC721 {
+contract ERC721 is ERC165, IERC721 {
 
     event Transfer(
         address indexed from, 
@@ -44,7 +46,7 @@ contract ERC721 {
     ///  function throws for queries about the zero address.
     /// @param _owner An address for whom to query the balance
     /// @return The number of NFTs owned by `_owner`, possibly zero
-    function balanceOf(address _owner) public view returns (uint256){
+    function balanceOf(address _owner) public view override returns (uint256){
         require(_owner != address(0), 'owner query for non-exit');
         return _ownerToTokenCount[_owner];
     }
@@ -54,7 +56,7 @@ contract ERC721 {
     ///  about them do throw.
     /// @param _tokenId The identifier for an NFT
     /// @return The address of the owner of the NFT
-    function ownerOf(uint256 _tokenId) external view returns (address){
+    function ownerOf(uint256 _tokenId) external view override returns (address){
         address owner = _tokenOwner[_tokenId];
         require(owner != address(0), 'owner query for non-exit');
 
@@ -83,6 +85,31 @@ contract ERC721 {
         _tokenApproval[tokenId] = _to;
 
         emit Approval(owner, _to, tokenId);
+    }
 
+
+    function _transferFrom(address _from,address _to,uint256 _tokenId) internal {
+        require(_to != address(0), 'Error - ERC 721 tranfer zero address');
+        require(ownerOf(_tokenId) == _from, 'Trying tranfer token address does not exists');
+
+        _ownerToTokenCount[_from] -= 1;
+        _ownerToTokenCount[_to] += 1;
+        _tokenOwner[_tokenId] = _to;
+
+        emit Transfer(from, to, tokenId);
+        
+    }
+
+    function transferFrom(address _from,address _to,uint256 _tokenId) public {
+        require(isApprovedOrOwner(msg.sender, _tokenId));
+        _transferFrom(_from, _to, _tokenId);
+
+    }
+
+    function isApprovedOrOwner(address spender, uint256 tokenId) internal returns(bool) {
+        require(_exists(tokenId), 'Token not exits');
+        address owner = ownerOf(tokenId);
+
+        return (spender == owner);
     }
 }
