@@ -1,6 +1,8 @@
 pragma solidity ^0.8.0;
 
-contract  ERC721Metadata /* is ERC721 */ {
+import "./interfaces/IERC721Metadata.sol";
+
+contract  ERC721Metadata  is IERC721Metadata{
     string  private _name;
     string private _symbol;
 
@@ -9,11 +11,11 @@ contract  ERC721Metadata /* is ERC721 */ {
         _symbol = symbolified;
     }
 
-    function name() external view returns (string memory) {
+    function name() external view override returns (string memory) {
         return _name;
     }
 
-    function symbol() external view returns (string memory) {
+    function symbol() external view override returns (string memory) {
         return  _symbol;
     }
 }

@@ -1,8 +1,10 @@
 pragma solidity ^0.8.0;
 
+import "./interfaces/IERC721Enumerable.sol";
+
 import "./ERC721.sol";
 
-contract ERC721Enumerable is ERC721 {
+contract ERC721Enumerable is ERC721, IERC721Enumerable {
 
     uint256[] private _allTokens;
     // mapping form token id to position in _allToken
@@ -15,7 +17,7 @@ contract ERC721Enumerable is ERC721 {
     /// @notice Count NFTs tracked by this contract
     /// @return A count of valid NFTs tracked by this contract, where each one of
     ///  them has an assigned and queryable owner not equal to the zero address
-    function totalSupply() public view returns (uint256){
+    function totalSupply() public view override returns (uint256){
         return _allTokens.length;
     }
 
@@ -24,7 +26,7 @@ contract ERC721Enumerable is ERC721 {
     /// @param _index A counter less than `totalSupply()`
     /// @return The token identifier for the `_index`th NFT,
     ///  (sort order not specified)
-    function tokenByIndex(uint256 _index) external view returns (uint256){
+    function tokenByIndex(uint256 _index) external view override returns (uint256){
         // index not out of bounds of the total supply
 
         require(_index < totalSupply(), 'Gloabal index out of bound');
@@ -38,7 +40,7 @@ contract ERC721Enumerable is ERC721 {
     /// @param _index A counter less than `balanceOf(_owner)`
     /// @return The token identifier for the `_index`th NFT assigned to `_owner`,
     ///   (sort order not specified)
-    function tokenOfOwnerByIndex(address _owner, uint256 _index) external view returns (uint256){
+    function tokenOfOwnerByIndex(address _owner, uint256 _index) external view override returns (uint256){
         // index not out of bounds of the total supply
         require(_index < balanceOf(_owner), 'Gloabal owner out of bound');
         return _ownerTokens[_owner][_index];
